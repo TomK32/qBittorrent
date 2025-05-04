@@ -55,4 +55,6 @@ private slots:
 
     void networkInterfaceListAction();
     void networkInterfaceAddressListAction();
+
+    void downloadDirectoriesAction();
 };

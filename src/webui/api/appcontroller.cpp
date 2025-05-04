@@ -1318,3 +1318,28 @@ void AppController::networkInterfaceAddressListAction()
 
     setResult(addressList);
 }
+
+void AppController::downloadDirectoriesAction()
+{
+    const QDir directory = QDir(BitTorrent::Session::instance()->savePath().toString());
+
+    // Optional parameter for a subdirectory
+    QString subDir = params().value(u"directory"_s).trimmed();
+
+    // Don't allow any funny business with extra
+    if (QDir::cleanPath(subDir) != subDir) {
+        subDir = "";
+    }
+
+    if (!directory(rootPath).cd(subDir))
+        throw APIError(APIErrorType::NotFound, tr("Directory does not exist: %1").arg(targetPath));
+
+    QJsonArray subdirectories;
+    const QFileInfoList entries = directory.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for (const QFileInfo &entry : entries)
+    {
+        subdirectories.append(entry.fileName());
+    }
+
+    setResult(subdirectories);
+}
